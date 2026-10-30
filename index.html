@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101827">
+<meta name="description" content="REPTRACK workout planner and progress tracker">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>REPTRACK — Workout Tracker</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1220;--panel:#131f31;--panel2:#1b2a40;--line:#293b54;--text:#edf4ff;--muted:#9fb0c7;--blue:#70b7ff;--green:#55d6a1;--red:#ff7885}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(160deg,#101d31,#080e18 65%);color:var(--text);font:15px system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+.wrap{max-width:760px;margin:auto;padding:18px 16px 42px}.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}.brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:1.5px}.logo{width:40px;height:40px;border-radius:13px;background:#203c5d;display:grid;place-items:center;color:var(--blue);font-size:23px}
+.pill{font-size:11px;color:#9be5c9;border:1px solid #28634f;padding:5px 9px;border-radius:99px}
+.hero{background:linear-gradient(135deg,#1b3554,#17253a);border:1px solid #34506f;border-radius:22px;padding:20px;margin-bottom:18px}
+.eyebrow{font-size:11px;letter-spacing:1.3px;color:#a8c5e5;font-weight:700}.hero h1{margin:7px 0 16px;font-size:28px}.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{background:#ffffff0d;border-radius:14px;padding:12px}.stat strong{display:block;font-size:25px}.stat span{font-size:12px;color:#b6c9df}
+.progress-head{display:flex;justify-content:space-between;margin:17px 0 7px;font-size:13px}.bar{height:9px;background:#40516a;border-radius:99px;overflow:hidden}.bar>i{display:block;height:100%;width:0;background:var(--blue);border-radius:99px;transition:width .2s}
+.tabs{display:flex;gap:7px;overflow:auto;margin:18px 0}.tab{border:1px solid var(--line);background:transparent;color:var(--muted);padding:10px 13px;border-radius:12px;white-space:nowrap;font-weight:650}.tab.active{background:#244467;color:#fff;border-color:#4779a8}
+section{display:none}section.active{display:block}.card{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:15px;margin:11px 0}.card h2,.card h3{margin:0 0 12px}.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.muted{color:var(--muted);font-size:13px}
+input,select,textarea{width:100%;background:#0c1726;border:1px solid var(--line);border-radius:11px;padding:11px;color:var(--text);font:inherit;min-width:0}label{display:block;color:var(--muted);font-size:12px;margin:9px 0 5px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button{cursor:pointer;border:0;border-radius:11px;padding:11px 14px;font:700 14px system-ui;color:#071321;background:var(--blue)}button.secondary{background:#263950;color:var(--text);border:1px solid #3a506d}button.danger{background:#492632;color:#ffd8de;border:1px solid #773a49}button:disabled{opacity:.4;cursor:not-allowed}
+.exercise{display:flex;align-items:center;gap:11px;padding:12px 0;border-bottom:1px solid var(--line)}.exercise:last-child{border:0}.exercise input[type=checkbox]{width:20px;height:20px;accent-color:var(--green)}.exmain{flex:1;min-width:0}.exmain b{display:block}.exmain small{color:var(--muted)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.actions button{flex:1}.day{background:#0d1827;border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}.day strong{display:block}.day small{color:var(--muted);font-size:10px}.day.today{border-color:var(--blue);background:#1a3450}
+.history-item{padding:12px 0;border-bottom:1px solid var(--line)}.history-item:last-child{border:0}
+footer{text-align:center;color:#71849e;font-size:11px;margin-top:24px}
+@media(min-width:600px){.wrap{padding-top:28px}.hero{padding:25px}.hero h1{font-size:34px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <header class="top"><div class="brand"><div class="logo">✦</div> REPTRACK</div><span class="pill">YOUR TRAINING HUB</span></header>
+ <div class="hero">
+  <div class="eyebrow">YOUR FITNESS DASHBOARD</div><h1 id="heroName">My Workout</h1>
+  <div class="stats"><div class="stat"><strong id="sessionCount">0</strong><span>Workouts completed</span></div><div class="stat"><strong id="exerciseCount">0</strong><span>Exercises today</span></div></div>
+  <div class="progress-head"><b>Today's progress</b><b id="progressText">0%</b></div><div class="bar"><i id="progressBar"></i></div>
+ </div>
+ <nav class="tabs">
+  <button class="tab active" data-tab="today">Today</button><button class="tab" data-tab="routines">Routines</button><button class="tab" data-tab="calendar">Calendar</button><button class="tab" data-tab="history">History</button>
+ </nav>
+ <section id="today" class="active">
+  <div class="card"><div class="row"><h2 id="todayTitle">Today's workout</h2><span class="muted" id="todayDate"></span></div><div id="todayExercises"></div>
+   <div class="actions"><button id="finishBtn" disabled>Complete workout</button><button class="secondary" id="resetBtn">Reset checks</button></div>
+  </div>
+  <div class="card"><h3>Session notes</h3><textarea id="notes" rows="3" placeholder="How did the session feel? What would you like to remember?"></textarea><p class="muted">Notes save automatically on this device.</p></div>
+ </section>
+ <section id="routines">
+  <div class="card"><h2>Your routines</h2><div id="routineList"></div></div>
+  <div class="card"><h3 id="formTitle">Create a routine</h3>
+   <label>Routine name</label><input id="routineName" placeholder="e.g. Full Body A">
+   <label>Exercises (one per line: name, sets, reps)</label><textarea id="routineExercises" rows="5" placeholder="Push-ups, 3, 10&#10;Bodyweight squats, 3, 12&#10;Plank, 3, 30"></textarea>
+   <p class="muted">For planks, enter seconds in the reps field. Choose comfortable exercises and loads for your experience.</p>
+   <div class="actions"><button id="saveRoutine">Save routine</button><button class="secondary" id="cancelEdit">Clear</button></div>
+  </div>
+ </section>
+ <section id="calendar">
+  <div class="card"><div class="row"><h2>This week</h2><span class="muted" id="weekLabel"></span></div><div id="weekGrid" class="grid2"></div><p class="muted">Completed sessions are marked with a check. This is a simple activity view, not a required training schedule.</p></div>
+ </section>
+ <section id="history">
+  <div class="card"><div class="row"><h2>Workout history</h2><button class="secondary" id="exportBtn">Export backup</button></div><div id="historyList"></div></div>
+  <div class="card"><h3>Restore a backup</h3><input type="file" id="importFile" accept="application/json"><p class="muted">Import replaces the data currently saved in this browser.</p></div>
+  <div class="card"><h3>Device data</h3><p class="muted">Your routines and workout history are saved locally in this browser. They do not automatically sync to other devices. Export a backup occasionally.</p><button class="danger" id="clearData">Clear all app data</button></div>
+ </section>
+ <footer>REPTRACK · Built for consistency, not perfection.</footer>
+</div>
+<script>
+const KEY='reptrack-v1';
+const todayKey=()=>new Date().toLocaleDateString('en-CA');
+const defaultState=()=>({routines:[{id:'starter',name:'Starter Workout',exercises:[{name:'Push-ups',sets:3,reps:10},{name:'Bodyweight squats',sets:3,reps:12},{name:'Plank',sets:3,reps:20}]}],activeRoutine:'starter',checks:{},notes:{},history:[]});
+let state;
+try{state=JSON.parse(localStorage.getItem(KEY))||defaultState()}catch{state=defaultState()}
+function save(){localStorage.setItem(KEY,JSON.stringify(state));render()}
+function active(){return state.routines.find(r=>r.id===state.activeRoutine)||state.routines[0]}
+function dayChecks(){return state.checks[todayKey()]||[]}
+function render(){
+ const r=active(); const ex=r?.exercises||[]; const checks=dayChecks(); const done=checks.filter(Boolean).length; const pct=ex.length?Math.round(done/ex.length*100):0;
+ document.getElementById('heroName').textContent=r?.name||'My Workout';
+ document.getElementById('sessionCount').textContent=state.history.length;
+ document.getElementById('exerciseCount').textContent=`${done}/${ex.length}`;
+ document.getElementById('progressText').textContent=pct+'%';document.getElementById('progressBar').style.width=pct+'%';
+ document.getElementById('todayTitle').textContent=r?.name||"Today's workout";
+ document.getElementById('todayDate').textContent=new Date().toLocaleDateString(undefined,{month:'short',day:'numeric'});
+ document.getElementById('todayExercises').innerHTML=ex.length?ex.map((e,i)=>`<div class="exercise"><input type="checkbox" data-check="${i}" ${checks[i]?'checked':''}><div class="exmain"><b>${esc(e.name)}</b><small>${e.sets} sets · ${e.reps} ${/^plank$/i.test(e.name)?'seconds':'reps'} per set</small></div></div>`).join(''):'<p class="muted">Add exercises in Routines to get started.</p>';
+ document.querySelectorAll('[data-check]').forEach(el=>el.addEventListener('change',()=>{const a=dayChecks().slice();a[+el.dataset.check]=el.checked;state.checks[todayKey()]=a;save()}));
+ document.getElementById('finishBtn').disabled=!ex.length||done!==ex.length||state.history.some(h=>h.date===todayKey()&&h.routineId===r.id);
+ document.getElementById('notes').value=state.notes[todayKey()]||'';
+ document.getElementById('routineList').innerHTML=state.routines.map(x=>`<div class="history-item"><div class="row"><div><b>${esc(x.name)}</b><div class="muted">${x.exercises.length} exercises${x.id===state.activeRoutine?' · Active':''}</div></div><div class="actions" style="margin:0"><button class="secondary" data-use="${x.id}">Use</button><button class="secondary" data-edit="${x.id}">Edit</button><button class="danger" data-delete="${x.id}">×</button></div></div></div>`).join('');
+ document.querySelectorAll('[data-use]').forEach(b=>b.onclick=()=>{state.activeRoutine=b.dataset.use;save();showTab('today')});
+ document.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>editRoutine(b.dataset.edit));
+ document.querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>{if(state.routines.length<2){alert('Keep at least one routine.');return}if(confirm('Delete this routine?')){state.routines=state.routines.filter(x=>x.id!==b.dataset.delete);if(state.activeRoutine===b.dataset.delete)state.activeRoutine=state.routines[0].id;save()}});
+ document.getElementById('historyList').innerHTML=state.history.length?[...state.history].reverse().map(h=>`<div class="history-item"><b>${esc(h.name)}</b><div class="muted">${new Date(h.date+'T12:00:00').toLocaleDateString()} · ${h.count} exercises completed</div>${h.notes?`<p class="muted">${esc(h.notes)}</p>`:''}</div>`).join(''):'<p class="muted">No completed workouts yet. Your first session will show up here.</p>';
+ renderCalendar();
+}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function showTab(id){document.querySelectorAll('section').forEach(s=>s.classList.toggle('active',s.id===id));document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===id))}
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+document.getElementById('notes').addEventListener('input',e=>{state.notes[todayKey()]=e.target.value;localStorage.setItem(KEY,JSON.stringify(state))});
+document.getElementById('resetBtn').onclick=()=>{if(confirm('Reset today’s exercise checks?')){state.checks[todayKey()]=[];save()}};
+document.getElementById('finishBtn').onclick=()=>{const r=active();if(!r)return;state.history.push({date:todayKey(),routineId:r.id,name:r.name,count:r.exercises.length,notes:state.notes[todayKey()]||''});save()};
+let editingId=null;
+function editRoutine(id){const r=state.routines.find(x=>x.id===id);if(!r)return;editingId=id;document.getElementById('formTitle').textContent='Edit routine';document.getElementById('routineName').value=r.name;document.getElementById('routineExercises').value=r.exercises.map(e=>`${e.name}, ${e.sets}, ${e.reps}`).join('\\n');showTab('routines')}
+document.getElementById('saveRoutine').onclick=()=>{const name=document.getElementById('routineName').value.trim();const lines=document.getElementById('routineExercises').value.split('\\n').map(x=>x.trim()).filter(Boolean);if(!name||!lines.length){alert('Enter a routine name and at least one exercise.');return}const exercises=[];for(const line of lines){const p=line.split(',').map(x=>x.trim());const sets=Number(p[1]),reps=Number(p[2]);if(p.length<3||!p[0]||!Number.isInteger(sets)||!Number.isInteger(reps)||sets<1||reps<1||sets>100||reps>1000){alert('Check this line: '+line+'\\nUse: Exercise name, sets, reps');return}exercises.push({name:p[0],sets,reps})}if(editingId){const r=state.routines.find(x=>x.id===editingId);r.name=name;r.exercises=exercises}else{const id='r'+Date.now();state.routines.push({id,name,exercises});state.activeRoutine=id}editingId=null;document.getElementById('routineName').value='';document.getElementById('routineExercises').value='';document.getElementById('formTitle').textContent='Create a routine';save()};
+document.getElementById('cancelEdit').onclick=()=>{editingId=null;document.getElementById('routineName').value='';document.getElementById('routineExercises').value='';document.getElementById('formTitle').textContent='Create a routine'};
+function renderCalendar(){const now=new Date();const day=(now.getDay()+6)%7;const monday=new Date(now);monday.setDate(now.getDate()-day);document.getElementById('weekLabel').textContent=monday.toLocaleDateString(undefined,{month:'short',day:'numeric'});document.getElementById('weekGrid').innerHTML=Array.from({length:7},(_,i)=>{const d=new Date(monday);d.setDate(monday.getDate()+i);const key=d.toLocaleDateString('en-CA');const count=state.history.filter(h=>h.date===key).length;return `<div class="day ${key===todayKey()?'today':''}"><strong>${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][i]}</strong><small>${d.getDate()} ${count?'✓':''}</small></div>`}).join('')}
+document.getElementById('exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='reptrack-backup.json';a.click();URL.revokeObjectURL(a.href)};
+document.getElementById('importFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const data=JSON.parse(await f.text());if(!Array.isArray(data.routines)||!Array.isArray(data.history))throw Error();state=data;if(!state.routines.length)state=defaultState();save();alert('Backup restored.')}catch{alert('That backup file could not be read.')}e.target.value=''};
+document.getElementById('clearData').onclick=()=>{if(confirm('Permanently clear routines and history saved in this browser?')){state=defaultState();save()}};
+if('serviceWorker' in navigator && location.protocol!=='file:'){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
+render();
+</script>
+</body></html>
